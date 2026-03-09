@@ -1,0 +1,66 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+  --primary-accent: #F63049;
+  --secondary-accent: #D02752;
+  --muted-accent: #8A244B;
+  --dark-text: #111F35;
+  --bg-light: #F8F9FA;
+  --text-white: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--dark-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Utility Classes */
+.bg-dark-custom {
+  background-color: var(--dark-text) !important;
+}
+
+.text-primary-custom {
+  color: var(--primary-accent) !important;
+}
+
+.btn-primary-custom {
+  background-color: var(--primary-accent);
+  border-color: var(--primary-accent);
+  color: var(--text-white);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--secondary-accent);
+  border-color: var(--secondary-accent);
+  color: var(--text-white);
+}
+
+.nav-link-custom {
+  color: var(--text-white) !important;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom.active {
+  opacity: 1;
+  border-bottom: 2px solid var(--primary-accent);
+}
+
+.card-custom {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+}
+
+.card-header-custom {
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-weight: 600;
+  color: var(--dark-text);
+}

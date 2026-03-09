@@ -1,0 +1,73 @@
+:root {
+  --primary: #F63049;
+  --primary-hover: #D02752;
+  --secondary: #8A244B;
+  --dark: #111F35;
+  --light: #F5F7FA;
+  --white: #ffffff;
+  --gray: #e0e0e0;
+  --text-color: #111F35;
+  --error: #ff3333;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: var(--light);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.category-card {
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--primary) !important;
+}
+
+.category-card:hover h3 {
+  color: var(--primary) !important;
+}
+
+.category-card:hover .icon {
+  color: var(--primary) !important;
+}
