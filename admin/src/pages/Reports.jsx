@@ -123,7 +123,7 @@ const Reports = () => {
             <Row className="g-4">
                 {/* Configuration */}
                 <Col lg={4}>
-                    <Card className="card-custom border-0 h-100">
+                    <Card className="glass-card border-0 h-100 shadow-sm fade-in">
                         <Card.Header className="bg-white py-3 border-0">
                             <h6 className="mb-0 fw-bold">Report Configuration</h6>
                         </Card.Header>
@@ -223,8 +223,8 @@ const Reports = () => {
                                 </div>
                             </div>
 
-                            <Card className="card-custom border-0 mb-4">
-                                <Card.Body className="p-4">
+                            <Card className="glass-card border-0 mb-4 shadow-sm fade-in" style={{ animationDelay: '0.1s' }}>
+                                <Card.Body className="p-4 bg-white bg-opacity-50">
                                     <Row className="text-center">
                                         <Col md={4} className="border-end">
                                             <small className="text-muted text-uppercase fw-bold d-block mb-1">Total Feedbacks</small>
@@ -246,8 +246,8 @@ const Reports = () => {
                             <Row className="g-4 mb-4">
                                 {/* Distribution */}
                                 <Col lg={12}>
-                                    <Card className="card-custom border-0 h-100">
-                                        <Card.Header className="bg-white border-0 py-3">
+                                    <Card className="glass-card border-0 h-100 shadow-sm fade-in hover-lift" style={{ animationDelay: '0.2s' }}>
+                                        <Card.Header className="bg-white bg-opacity-75 border-0 py-3">
                                             <h6 className="fw-bold mb-0">Star Rating Distribution</h6>
                                         </Card.Header>
                                         <Card.Body>
@@ -275,8 +275,8 @@ const Reports = () => {
                             </Row>
 
                             {/* Detailed Table */}
-                            <Card className="card-custom border-0">
-                                <Card.Header className="bg-white border-0 py-3">
+                            <Card className="glass-card border-0 shadow-sm fade-in hover-lift" style={{ animationDelay: '0.3s' }}>
+                                <Card.Header className="bg-white bg-opacity-75 border-0 py-3">
                                     <h6 className="fw-bold mb-0">Detailed Feedback</h6>
                                 </Card.Header>
                                 <Card.Body className="p-0">
