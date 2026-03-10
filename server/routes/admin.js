@@ -134,4 +134,23 @@ router.get('/analytics', auth, adminAuth, async (req, res) => {
     }
 });
 
+// UPDATE Feedback Status
+router.put('/feedback/:id/status', auth, adminAuth, async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!['Submitted', 'Under Progress', 'Reviewed'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+        const feedback = await Feedback.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+        if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
+        res.json(feedback);
+    } catch (err) {
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
 module.exports = router;

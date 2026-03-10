@@ -21,6 +21,11 @@ const Login = () => {
         try {
             const response = await api.post('/auth/login', { email, password });
             if (response.data.token) {
+                if (response.data.user.role !== 'student') {
+                    setError('Access Denied: Only students can access this portal.');
+                    setLoading(false);
+                    return;
+                }
                 login(response.data);
                 navigate('/dashboard');
             }

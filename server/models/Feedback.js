@@ -14,6 +14,11 @@ const FeedbackSchema = new mongoose.Schema({
         of: String // e.g., "What did you like": "Everything"
     },
     overallRating: { type: Number, required: true },
+    status: {
+        type: String,
+        enum: ['Submitted', 'Under Progress', 'Reviewed'],
+        default: 'Submitted'
+    },
     submittedAt: { type: Date, default: Date.now }
 });
 

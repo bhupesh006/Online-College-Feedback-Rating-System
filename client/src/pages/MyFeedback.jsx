@@ -43,6 +43,12 @@ const MyFeedback = () => {
         return diffMins < 15;
     };
 
+    const getProgressStatus = (status) => {
+        if (status === 'Reviewed') return { text: 'Reviewed', color: 'success' };
+        if (status === 'Under Progress') return { text: 'Under Progress', color: 'warning' };
+        return { text: 'Submitted', color: 'info' };
+    };
+
     if (loading) return <Container className="py-5 text-center"><div>Loading...</div></Container>;
 
     return (
@@ -59,7 +65,13 @@ const MyFeedback = () => {
                                 <Card.Body>
                                     <div className="d-flex justify-content-between align-items-start mb-3">
                                         <div>
-                                            <Badge bg="light" text="dark" className="mb-2 border">{item.category}</Badge>
+                                            <div className="d-flex align-items-center gap-2 mb-2">
+                                                <Badge bg="light" text="dark" className="border">{item.category}</Badge>
+                                                {(() => {
+                                                    const status = getProgressStatus(item.status);
+                                                    return <Badge bg={status.color}>{status.text}</Badge>;
+                                                })()}
+                                            </div>
                                             <h4 style={{ color: '#111F35' }}>{item.subCategory}</h4>
                                         </div>
                                         <small className="text-muted">

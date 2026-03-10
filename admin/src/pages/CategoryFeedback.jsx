@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Row, Col, Card, Table, Badge, Button, Tab, Nav, ProgressBar } from 'react-bootstrap';
+import { Row, Col, Card, Table, Badge, Button, Tab, Nav, ProgressBar, Modal, Form } from 'react-bootstrap';
 import { ArrowLeft, User, Calendar, Star, Filter } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,25 @@ const CategoryFeedback = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [feedbacks, setFeedbacks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
+
+    const handleViewDetails = (feedback) => {
+        setSelectedFeedback(feedback);
+        setShowModal(true);
+    };
+
+    const handleUpdateStatus = async (status) => {
+        if (!selectedFeedback) return;
+        try {
+            await api.put(`/admin/feedback/${selectedFeedback._id}/status`, { status });
+            setFeedbacks(feedbacks.map(f => f._id === selectedFeedback._id ? { ...f, status } : f));
+            setSelectedFeedback({ ...selectedFeedback, status });
+        } catch (err) {
+            console.error("Failed to update status", err);
+            alert("Failed to update status");
+        }
+    };
 
     const categoryNames = {
         'academic': 'Academic',
@@ -159,9 +178,10 @@ const CategoryFeedback = () => {
                                 <tr>
                                     <th className="border-0 ps-3">Student</th>
                                     <th className="border-0">Sub-Category</th>
-                                    <th className="border-0" style={{ width: '40%' }}>Feedback</th>
+                                    <th className="border-0">Status</th>
                                     <th className="border-0 text-center">Rating</th>
-                                    <th className="border-0 text-end pe-3">Date</th>
+                                    <th className="border-0 text-end">Date</th>
+                                    <th className="border-0 text-end pe-3">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -184,10 +204,12 @@ const CategoryFeedback = () => {
                                             </Badge>
                                         </td>
                                         <td>
-                                            {/* Displaying first question answer or category as content since we don't have a single 'content' field */}
-                                            <div className="text-secondary small">
-                                                {item.questions && Object.values(item.questions)[0] ? Object.values(item.questions)[0].substring(0, 50) + '...' : 'Feedback Submitted'}
-                                            </div>
+                                            <Badge bg={
+                                                item.status === 'Reviewed' ? 'success' :
+                                                item.status === 'Under Progress' ? 'warning' : 'info'
+                                            } text={item.status === 'Under Progress' ? 'dark' : 'light'} className="fw-normal">
+                                                {item.status || 'Submitted'}
+                                            </Badge>
                                         </td>
                                         <td className="text-center">
                                             <div className={`d-inline-flex align-items-center px-2 py-1 rounded-pill bg-${getRatingColor(item.overallRating).replace('text-', '')}-subtle text-${getRatingColor(item.overallRating)}`}>
@@ -195,11 +217,16 @@ const CategoryFeedback = () => {
                                                 <Star size={12} className={`ms-1 fill-current text-${getRatingColor(item.overallRating)}`} style={{ fill: 'currentColor' }} />
                                             </div>
                                         </td>
-                                        <td className="text-end pe-3">
+                                        <td className="text-end">
                                             <div className="d-flex align-items-center justify-content-end text-muted small">
                                                 <Calendar size={14} className="me-1" />
                                                 {new Date(item.submittedAt).toLocaleDateString()}
                                             </div>
+                                        </td>
+                                        <td className="text-end pe-3">
+                                            <Button variant="outline-primary" size="sm" onClick={() => handleViewDetails(item)}>
+                                                View
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))}
@@ -215,6 +242,76 @@ const CategoryFeedback = () => {
                     </div>
                 </Card.Body>
             </Card>
+
+            <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Feedback Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedFeedback && (
+                        <div>
+                            <Row className="mb-3">
+                                <Col md={6}>
+                                    <strong>Student:</strong> {selectedFeedback.studentName} ({selectedFeedback.studentEmail})<br/>
+                                    <strong>Category:</strong> {selectedFeedback.category} - {selectedFeedback.subCategory}<br/>
+                                </Col>
+                                <Col md={6} className="text-md-end">
+                                    <strong>Date:</strong> {new Date(selectedFeedback.submittedAt).toLocaleString()}<br/>
+                                    <strong>Overall Rating:</strong> <Badge bg="primary">{selectedFeedback.overallRating} ★</Badge>
+                                </Col>
+                            </Row>
+                            
+                            <h6 className="fw-bold mt-4 border-bottom pb-2">Questions & Comments</h6>
+                            {selectedFeedback.questions && Object.keys(selectedFeedback.questions).length > 0 ? (
+                                <div className="bg-light p-3 rounded">
+                                    {Object.entries(selectedFeedback.questions).map(([q, a], idx) => (
+                                        <div key={idx} className="mb-3">
+                                            <p className="fw-semibold mb-1 text-dark">{q}</p>
+                                            <p className="text-muted mb-0">{a || <em>No response</em>}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-muted">No specific questions answered.</p>
+                            )}
+
+                            <h6 className="fw-bold mt-4 border-bottom pb-2">Detailed Ratings</h6>
+                            {selectedFeedback.ratings && Object.keys(selectedFeedback.ratings).length > 0 ? (
+                                <Row className="mt-2">
+                                    {Object.entries(selectedFeedback.ratings).map(([criterion, rating], idx) => (
+                                        <Col sm={6} md={4} key={idx} className="mb-2">
+                                            <div className="d-flex justify-content-between align-items-center p-2 border rounded">
+                                                <span className="small">{criterion}</span>
+                                                <Badge bg="secondary">{rating} ★</Badge>
+                                            </div>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            ) : (
+                                <p className="text-muted">No detailed ratings provided.</p>
+                            )}
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer className="justify-content-between">
+                    <div className="d-flex align-items-center gap-2">
+                        <strong className="mb-0">Update Status:</strong>
+                        <Form.Select 
+                            size="sm" 
+                            style={{width: 'auto'}} 
+                            value={selectedFeedback?.status || 'Submitted'}
+                            onChange={(e) => handleUpdateStatus(e.target.value)}
+                        >
+                            <option value="Submitted">Submitted</option>
+                            <option value="Under Progress">Under Progress</option>
+                            <option value="Reviewed">Reviewed</option>
+                        </Form.Select>
+                    </div>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };

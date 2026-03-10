@@ -12,7 +12,13 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('client_user');
         const token = localStorage.getItem('client_token');
         if (storedUser && token) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser.role !== 'student') {
+                localStorage.removeItem('client_user');
+                localStorage.removeItem('client_token');
+            } else {
+                setUser(parsedUser);
+            }
         }
         setLoading(false);
     }, []);

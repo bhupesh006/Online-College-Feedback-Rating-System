@@ -22,10 +22,12 @@ const Dashboard = () => {
                 if (feedbacks && feedbacks.length > 0) {
                     const uniqueCategories = new Set(feedbacks.map(f => f.category)).size;
                     const totalRating = feedbacks.reduce((acc, curr) => acc + curr.overallRating, 0);
+                    const reviewedCount = feedbacks.filter(f => f.status === 'Reviewed').length;
                     
                     setStats({
                         total: feedbacks.length,
                         categories: uniqueCategories,
+                        reviewed: reviewedCount,
                         avgRating: (totalRating / feedbacks.length).toFixed(1)
                     });
                 }
@@ -102,8 +104,8 @@ const Dashboard = () => {
                     <Col md={4} sm={6}>
                         <div className="bg-white p-4 rounded-4 shadow-sm border h-100 category-card d-flex flex-column align-items-center justify-content-center">
                             <FaStar color="#ffc107" className="mb-3" size={40} />
-                            <h2 className="fw-bold mb-1" style={{ color: '#111F35' }}>{stats.avgRating}</h2>
-                            <p className="text-muted mb-0">Average Rating Given</p>
+                            <h2 className="fw-bold mb-1" style={{ color: '#111F35' }}>{stats.reviewed || 0}</h2>
+                            <p className="text-muted mb-0">Feedbacks Reviewed</p>
                         </div>
                     </Col>
                 </Row>

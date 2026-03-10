@@ -27,22 +27,34 @@ const seedUsers = async () => {
             year: 'N/A'
         });
 
-        // Student User
-        const student = new User({
-            name: 'John Doe',
-            email: 'student@college.edu',
+        // Student User 1
+        const student1 = new User({
+            name: 'Abishek',
+            email: 'abishek@college.edu',
             password: 'student123',
             role: 'student',
             department: 'Computer Science',
             year: '3rd Year'
         });
 
+        // Student User 2
+        const student2 = new User({
+            name: 'Bhupesh',
+            email: 'bhupesh@college.edu',
+            password: 'student123',
+            role: 'student',
+            department: 'Computer Science',
+            year: '3rd Year'
+        });
+
+
         await admin.save();
-        await student.save();
+        await student1.save();
+        await student2.save();
 
         console.log('Users Seeded Successfully');
         console.log('Admin: admin@college.edu / admin123');
-        console.log('Student: student@college.edu / student123');
+        console.log('Students: abishek@college.edu, bhupesh@college.edu / student123');
         process.exit();
     } catch (err) {
         console.error(err);
