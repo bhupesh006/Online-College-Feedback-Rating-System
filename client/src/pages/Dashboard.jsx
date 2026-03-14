@@ -5,7 +5,12 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import Card from '../components/Card';
 import { Container, Row, Col } from 'react-bootstrap';
-import { FaUniversity, FaFlask, FaBook, FaBriefcase, FaBuilding, FaUtensils, FaBus, FaWifi, FaFutbol, FaTheaterMasks, FaUserTie, FaBroom, FaLaptopCode, FaDumbbell, FaPaintBrush, FaUsers, FaRecycle, FaBed, FaGraduationCap, FaCheckCircle, FaChartPie, FaStar } from 'react-icons/fa';
+import { 
+    LayoutDashboard, BookOpen, Beaker, Library, Briefcase, 
+    Home, Coffee, Bus, Building, Zap, Music, Users, 
+    Trash2, Smile, CheckCircle, TrendingUp, Star,
+    ChevronRight, GraduationCap
+} from 'lucide-react';
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -40,96 +45,123 @@ const Dashboard = () => {
         fetchStats();
     }, []);
 
-    const categoryIcons = {
-        'Academic': <FaGraduationCap color="#0d6efd" />,
-        'Laboratories': <FaFlask color="#20c997" />,
-        'Library': <FaBook color="#fd7e14" />,
-        'Placements': <FaBriefcase color="#6f42c1" />,
-        'Hostel': <FaBed color="#6c757d" />,
-        'Food': <FaUtensils color="#dc3545" />,
-        'Transport': <FaBus color="#ffc107" />,
-        'Infrastructure': <FaBuilding color="#198754" />,
-        'Sports': <FaFutbol color="#d63384" />,
-        'Culturals': <FaTheaterMasks color="#6610f2" />,
-        'Administration': <FaUserTie color="#0dcaf0" />,
-        'Cleanliness': <FaRecycle color="#20c997" />,
-        'Clubs': <FaUsers color="#fd7e14" />
-    };
-
-    const getIcon = (item) => categoryIcons[item] || <FaUniversity />;
+    const categoryGroups = [
+        {
+            title: 'Academics & Learning',
+            icon: <BookOpen size={20} />,
+            items: [
+                { id: 'Academic', name: 'Academic', icon: <GraduationCap size={18} /> },
+                { id: 'Laboratories', name: 'Laboratories', icon: <Beaker size={18} /> },
+                { id: 'Library', name: 'Library', icon: <Library size={18} /> },
+                { id: 'Placements', name: 'Placements', icon: <Briefcase size={18} /> }
+            ]
+        },
+        {
+            title: 'Facilities',
+            icon: <Home size={20} />,
+            items: [
+                { id: 'Hostel', name: 'Hostel', icon: <Home size={18} /> },
+                { id: 'Food', name: 'Food', icon: <Coffee size={18} /> },
+                { id: 'Transport', name: 'Transport', icon: <Bus size={18} /> },
+                { id: 'Infrastructure', name: 'Infrastructure', icon: <Building size={18} /> }
+            ]
+        },
+        {
+            title: 'Activities & Support',
+            icon: <Zap size={20} />,
+            items: [
+                { id: 'Sports', name: 'Sports', icon: <Zap size={18} /> },
+                { id: 'Culturals', name: 'Culturals', icon: <Music size={18} /> },
+                { id: 'Administration', name: 'Administration', icon: <Users size={18} /> },
+                { id: 'Cleanliness', name: 'Cleanliness', icon: <Trash2 size={18} /> },
+                { id: 'Clubs', name: 'Clubs', icon: <Smile size={18} /> }
+            ]
+        }
+    ];
 
     const handleCategoryClick = (category) => {
         navigate(`/feedback/${category}/select`);
     };
 
-    const sections = [
-        {
-            title: 'Academic & Training',
-            items: ['Academic', 'Laboratories', 'Library', 'Placements']
-        },
-        {
-            title: 'Facilities',
-            items: ['Hostel', 'Food', 'Transport', 'Infrastructure']
-        },
-        {
-            title: 'Activities & Support',
-            items: ['Sports', 'Culturals', 'Administration', 'Cleanliness', 'Clubs']
-        }
-    ];
-
     return (
-        <Container className="py-5">
-            <div className="text-center mb-5">
-                <h1 className="display-5 fw-bold" style={{ color: '#111F35' }}>Welcome, {user?.name}</h1>
-                <p className="text-muted lead">Select a category to submit feedback</p>
+        <div className="fade-in px-4 py-4" style={{ backgroundColor: '#FAF9F6', minHeight: '100vh' }}>
+            <div className="mb-5">
+                <h1 className="display-6 fw-bold mb-1" style={{ color: '#111F35' }}>Welcome, {user?.name}</h1>
+                <p className="text-muted mb-0">Select a category to share your valuable feedback</p>
             </div>
 
-            {/* Summary Cards */}
+            {/* Summary Row */}
             {!loadingStats && (
-                <Row className="mb-5 g-4 text-center justify-content-center">
-                    <Col md={4} sm={6}>
-                        <div className="bg-white p-4 rounded-4 shadow-sm border h-100 category-card d-flex flex-column align-items-center justify-content-center">
-                            <FaCheckCircle color="#20c997" className="mb-3" size={40} />
-                            <h2 className="fw-bold mb-1" style={{ color: '#111F35' }}>{stats.total}</h2>
-                            <p className="text-muted mb-0">Total Feedbacks</p>
+                <Row className="g-4 mb-5">
+                    <Col md={6} lg={4}>
+                        <div className="bg-white p-4 rounded-4 shadow-sm border-0 h-100 d-flex flex-column justify-content-between">
+                            <div className="d-flex align-items-center justify-content-between mb-3">
+                                <span className="text-muted small fw-bold text-uppercase">Total Feedbacks Submitted</span>
+                                <div className="bg-light p-2 rounded-circle text-primary-custom" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
+                                    <CheckCircle size={24} className="mx-auto" />
+                                </div>
+                            </div>
+                            <h2 className="display-6 fw-bold mb-0" style={{ color: '#111F35' }}>{stats.total}</h2>
                         </div>
                     </Col>
-                    <Col md={4} sm={6}>
-                        <div className="bg-white p-4 rounded-4 shadow-sm border h-100 category-card d-flex flex-column align-items-center justify-content-center">
-                            <FaChartPie color="#0dcaf0" className="mb-3" size={40} />
-                            <h2 className="fw-bold mb-1" style={{ color: '#111F35' }}>{stats.categories} / 13</h2>
-                            <p className="text-muted mb-0">Categories Reviewed</p>
+                    <Col md={6} lg={4}>
+                        <div className="bg-white p-4 rounded-4 shadow-sm border-0 h-100 d-flex flex-column justify-content-between">
+                            <div className="d-flex align-items-center justify-content-between mb-3">
+                                <span className="text-muted small fw-bold text-uppercase">Categories Covered</span>
+                                <div className="bg-light p-2 rounded-circle text-info" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
+                                    <TrendingUp size={24} className="mx-auto" />
+                                </div>
+                            </div>
+                            <h2 className="display-6 fw-bold mb-0" style={{ color: '#111F35' }}>{stats.categories} <small className="text-muted h5">/ 13</small></h2>
                         </div>
                     </Col>
-                    <Col md={4} sm={6}>
-                        <div className="bg-white p-4 rounded-4 shadow-sm border h-100 category-card d-flex flex-column align-items-center justify-content-center">
-                            <FaStar color="#ffc107" className="mb-3" size={40} />
-                            <h2 className="fw-bold mb-1" style={{ color: '#111F35' }}>{stats.reviewed || 0}</h2>
-                            <p className="text-muted mb-0">Feedbacks Reviewed</p>
+                    <Col md={6} lg={4}>
+                        <div className="bg-white p-4 rounded-4 shadow-sm border-0 h-100 d-flex flex-column justify-content-between">
+                            <div className="d-flex align-items-center justify-content-between mb-3">
+                                <span className="text-muted small fw-bold text-uppercase">Admin Reviews</span>
+                                <div className="bg-light p-2 rounded-circle text-warning" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
+                                    <Star size={24} className="mx-auto" />
+                                </div>
+                            </div>
+                            <h2 className="display-6 fw-bold mb-0" style={{ color: '#111F35' }}>{stats.reviewed || 0}</h2>
                         </div>
                     </Col>
                 </Row>
             )}
 
-            {sections.map((section, index) => (
-                <div key={index} className="mb-5">
-                    <h3 className="mb-4 pb-2 border-bottom" style={{ color: '#8A244B' }}>{section.title}</h3>
-                    <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-                        {section.items.map((item) => (
-                            <Col key={item}>
-                                <Card
-                                    title={item}
-                                    icon={<div className="icon" style={{ fontSize: '2.5rem' }}>{getIcon(item)}</div>}
-                                    onClick={() => handleCategoryClick(item)}
-                                />
-                            </Col>
-                        ))}
-                    </Row>
-                </div>
-            ))}
-        </Container>
+            <h5 className="fw-bold mb-4 text-dark px-2">Browse Categories</h5>
+            <Row className="g-4 mb-4 px-2">
+                {categoryGroups.map((group, idx) => (
+                    <Col lg={4} key={idx}>
+                        <div className="bg-white rounded-4 shadow-sm border-0 h-100 overflow-hidden card-custom">
+                            <div className="p-4 border-bottom bg-white d-flex align-items-center">
+                                <span className="text-primary-custom me-2">{group.icon}</span>
+                                <h6 className="fw-bold mb-0">{group.title}</h6>
+                            </div>
+                            <div className="p-4 pt-0 mt-3">
+                                <div className="d-flex flex-column gap-2">
+                                    {group.items.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="d-flex align-items-center p-3 rounded-3 border bg-light category-item-hover w-100"
+                                            style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                                            onClick={() => handleCategoryClick(item.id)}
+                                        >
+                                            <div className="p-2 bg-white rounded-circle shadow-sm me-3 text-secondary d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }}>
+                                                {item.icon}
+                                            </div>
+                                            <span className="fw-semibold text-dark flex-grow-1">{item.name}</span>
+                                            <ChevronRight size={16} className="text-muted opacity-50" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                ))}
+            </Row>
+        </div>
     );
 };
-
 
 export default Dashboard;

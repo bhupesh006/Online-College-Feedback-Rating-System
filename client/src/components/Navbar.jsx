@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Container, Nav, Dropdown } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaCommentDots } from 'react-icons/fa';
+import { LayoutDashboard, MessageSquare, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AppNavbar = () => {
@@ -11,49 +11,52 @@ const AppNavbar = () => {
     if (!user) return null;
 
     return (
-        <Navbar expand="lg" variant="dark" style={{ backgroundColor: '#111F35' }}>
-            <Container>
-                <Navbar.Brand as={Link} to="/dashboard" className="fw-bold">
-                    Student Feedback Portal
+        <Navbar expand="lg" className="bg-dark-custom mb-4 shadow-sm py-3" variant="dark" style={{ backgroundColor: '#111F35' }}>
+            <Container fluid className="px-4">
+                <Navbar.Brand as={Link} to="/dashboard" className="fw-bold d-flex align-items-center text-white">
+                    <div className="bg-white rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '32px', height: '32px' }}>
+                        <span className="text-primary-custom fw-bold">S</span>
+                    </div>
+                    <span>Student Feedback Portal</span>
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
+                <Navbar.Toggle aria-controls="student-navbar-nav" className="border-0" />
+                <Navbar.Collapse id="student-navbar-nav">
                     <Nav className="ms-auto align-items-center">
                         <Nav.Link
                             as={Link}
                             to="/dashboard"
-                            active={location.pathname === '/dashboard'}
-                            className={`d-flex align-items-center me-3 px-3 py-2 rounded ${location.pathname === '/dashboard' ? 'bg-white bg-opacity-10' : ''}`}
-                            style={{ transition: 'all 0.3s ease' }}
+                            className={`px-3 nav-link-custom ${location.pathname === '/dashboard' ? 'active' : ''}`}
                         >
-                            <FaHome className="me-2 text-info" size={18} /> Dashboard
+                            <LayoutDashboard size={18} className="me-2" />
+                            Dashboard
                         </Nav.Link>
                         <Nav.Link
                             as={Link}
                             to="/my-feedback"
-                            active={location.pathname === '/my-feedback'}
-                            className={`d-flex align-items-center me-3 px-3 py-2 rounded ${location.pathname === '/my-feedback' ? 'bg-white bg-opacity-10' : ''}`}
-                            style={{ transition: 'all 0.3s ease' }}
+                            className={`px-3 nav-link-custom ${location.pathname === '/my-feedback' ? 'active' : ''}`}
                         >
-                            <FaCommentDots className="me-2 text-warning" size={18} /> My Feedback
+                            <MessageSquare size={18} className="me-2" />
+                            My Feedback
                         </Nav.Link>
 
-                        <Dropdown align="end" className="ms-3">
-                            <Dropdown.Toggle variant="link" id="dropdown-profile" className="text-light text-decoration-none d-flex align-items-center p-0">
-                                <div style={{
-                                    width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#8A244B',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '10px',
-                                    color: 'white', fontWeight: 'bold'
-                                }}>
-                                    {user.name.charAt(0)}
-                                </div>
-                                {user.name}
-                            </Dropdown.Toggle>
+                        <div className="d-flex align-items-center ms-lg-4 mt-3 mt-lg-0 ps-lg-4 border-start-lg border-secondary">
+                            <Dropdown align="end">
+                                <Dropdown.Toggle variant="link" id="dropdown-profile" className="text-light text-decoration-none d-flex align-items-center p-0 border-0">
+                                    <div className="d-flex align-items-center text-white">
+                                        <div className="bg-white-10 rounded-circle p-1 me-2" style={{ background: 'rgba(255,255,255,0.1)', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <span className="fw-bold small">{user.name.charAt(0)}</span>
+                                        </div>
+                                        <span className="small fw-semibold">{user.name}</span>
+                                    </div>
+                                </Dropdown.Toggle>
 
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={logout} className="text-danger">Logout</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                                <Dropdown.Menu className="shadow border-0 mt-2">
+                                    <Dropdown.Item onClick={logout} className="text-danger d-flex align-items-center py-2">
+                                        <LogOut size={16} className="me-2" /> Logout
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

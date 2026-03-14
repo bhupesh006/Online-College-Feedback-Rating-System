@@ -8,6 +8,43 @@
   --gray: #e0e0e0;
   --text-color: #111F35;
   --error: #ff3333;
+  --primary-accent: #F63049;
+  --text-white: #ffffff;
+}
+
+/* Custom Utility Classes */
+.bg-dark-custom {
+  background-color: var(--dark) !important;
+}
+
+.text-primary-custom {
+  color: var(--primary-accent) !important;
+}
+
+.nav-link-custom {
+  color: var(--text-white) !important;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom.active {
+  opacity: 1;
+  border-bottom: 2px solid var(--primary-accent);
+}
+
+.bg-white-10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.border-start-lg {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 992px) {
+  .ps-lg-4 {
+    padding-left: 1.5rem !important;
+  }
 }
 
 * {
