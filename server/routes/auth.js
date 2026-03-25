@@ -62,28 +62,40 @@ router.post('/google', async (req, res) => {
         const clientId = process.env.GOOGLE_CLIENT_ID;
         let payload;
 
-        if (clientId && clientId !== 'placeholder-client-id') {
-            const ticket = await client.verifyIdToken({
-                idToken: credential,
-                audience: clientId,
-            });
-            payload = ticket.getPayload();
+        // Check if credential is a JWT (ID Token) or an Access Token
+        // JWTs have 3 parts separated by dots, Access Tokens (ya29.) might have 1 dot
+        const isJwt = typeof credential === 'string' && credential.split('.').length === 3;
+        
+        if (isJwt) {
+            // ID Token flow
+            if (clientId && clientId !== 'placeholder-client-id') {
+                const ticket = await client.verifyIdToken({
+                    idToken: credential,
+                    audience: clientId,
+                });
+                payload = ticket.getPayload();
+            } else {
+                // Warning: Development fallback without signature verification
+                const base64Url = credential.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                payload = JSON.parse(jsonPayload);
+            }
         } else {
-            // IF NO CLIENT ID CONFIGURED (development only)
-            // Decode without verifying signature just to extract email/name 
-            // DO NOT USE THIS IN PRODUCTION
-            const base64Url = credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            payload = JSON.parse(jsonPayload);
+            // Access Token flow (from useGoogleLogin custom button)
+            client.setCredentials({ access_token: credential });
+            const userInfoRes = await client.request({ 
+                url: 'https://www.googleapis.com/oauth2/v3/userinfo' 
+            });
+            payload = userInfoRes.data;
         }
 
         const { email, name } = payload;
 
         if (!email.endsWith('@bitsathy.ac.in')) {
-            return res.status(403).json({ message: 'Access Denied: Please use your official college email ID (@bitsathy.ac.in).' });
+            return res.status(403).json({ message: 'Access Denied: Please use your official college email ID.' });
         }
         
         let user = await User.findOne({ email });

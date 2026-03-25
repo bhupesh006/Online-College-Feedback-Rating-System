@@ -108,3 +108,22 @@ button {
 .category-card:hover .icon {
   color: var(--primary) !important;
 }
+
+.custom-google-btn {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 4px; /* or pill if you prefer, but btn default is 4px */
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-google-btn:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}

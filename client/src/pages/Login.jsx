@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
+import { FaGoogle } from 'react-icons/fa';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -36,29 +37,34 @@ const Login = () => {
         }
     };
 
-    const handleGoogleSuccess = async (credentialResponse) => {
-        try {
-            setLoading(true);
-            const response = await api.post('/auth/google', { 
-                credential: credentialResponse.credential,
-                role: 'student' 
-            });
-            
-            if (response.data.token) {
-                if (response.data.user.role !== 'student') {
-                    setError('Access Denied: Only students can access this portal.');
-                    return;
+    const loginWithGoogle = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                setLoading(true);
+                const response = await api.post('/auth/google', { 
+                    credential: tokenResponse.access_token,
+                    role: 'student' 
+                });
+                
+                if (response.data.token) {
+                    if (response.data.user.role !== 'student') {
+                        setError('Access Denied: Only students can access this portal.');
+                        return;
+                    }
+                    login(response.data);
+                    navigate('/dashboard');
                 }
-                login(response.data);
-                navigate('/dashboard');
+            } catch (err) {
+                console.error(err);
+                setError(err.response?.data?.message || 'Google Login failed.');
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.message || 'Google Login failed.');
-        } finally {
-            setLoading(false);
+        },
+        onError: () => {
+            setError('Google Sign-In was unsuccessful. Try again.');
         }
-    };
+    });
 
     return (
         <Container fluid style={{ height: '100vh', backgroundColor: '#F0F2F5' }} className="d-flex align-items-center justify-content-center">
@@ -105,14 +111,16 @@ const Login = () => {
                         </div>
 
                         <div className="d-flex justify-content-center w-100">
-                            <GoogleLogin
-                                onSuccess={handleGoogleSuccess}
-                                onError={() => {
-                                    setError('Google Sign-In was unsuccessful. Try again.');
-                                }}
-                                width="350px"
-                                useOneTap
-                            />
+                            <Button 
+                                variant="outline-dark"
+                                onClick={() => loginWithGoogle()}
+                                className="w-100 d-flex align-items-center justify-content-center"
+                                style={{ gap: '12px', padding: '10px' }}
+                                type="button"
+                            >
+                                <FaGoogle size={18} />
+                                <span style={{ fontWeight: 500 }}>Sign in with Google</span>
+                            </Button>
                         </div>
                     </Form>
                 </Card.Body>
