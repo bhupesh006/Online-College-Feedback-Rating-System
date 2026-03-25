@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { Row, Col, Card, Form, Button, Table, Badge, ProgressBar } from 'react-bootstrap';
-import { FileDown, Printer, FileText, CheckCircle, Filter, Download } from 'lucide-react';
+import { FileDown, Printer, FileText } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 const Reports = () => {
 
     const [generating, setGenerating] = useState(false);
     const [reportReady, setReportReady] = useState(false);
     const [feedbacks, setFeedbacks] = useState([]);
-    const [filteredFeedbacks, setFilteredFeedbacks] = useState([]);
+
     const [reportStats, setReportStats] = useState({
         totalFeedback: 0,
         averageRating: 0,
@@ -74,7 +77,6 @@ const Reports = () => {
                 });
             }
 
-            setFilteredFeedbacks(filtered);
             calculateStats(filtered);
             setGenerating(false);
             setReportReady(true);
@@ -116,6 +118,53 @@ const Reports = () => {
     };
 
     const reportData = reportStats; // Use computed stats
+
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        doc.text('Feedback Report', 14, 15);
+        doc.setFontSize(10);
+        doc.text(`Total Feedbacks: ${reportData.totalFeedback}`, 14, 22);
+        doc.text(`Average Rating: ${reportData.averageRating} / 5`, 14, 27);
+        doc.text(`Satisfaction Rate: ${reportData.satisfactionRate}%`, 14, 32);
+        
+        const tableColumn = ["Student Name", "Category", "Sub Category", "Rating", "Date"];
+        const tableRows = [];
+
+        reportData.detailedFeedback.forEach(item => {
+            const rowData = [
+                item.studentName || 'Anonymous',
+                item.category,
+                item.subCategory,
+                item.overallRating,
+                new Date(item.submittedAt).toLocaleDateString()
+            ];
+            tableRows.push(rowData);
+        });
+
+        autoTable(doc, {
+            head: [tableColumn],
+            body: tableRows,
+            startY: 40,
+        });
+
+        doc.save(`Feedback_Report_${new Date().getTime()}.pdf`);
+    };
+
+    const handleExportExcel = () => {
+        const exportData = reportData.detailedFeedback.map(item => ({
+            "Student Name": item.studentName || 'Anonymous',
+            "Category": item.category,
+            "Sub Category": item.subCategory,
+            "Overall Rating": item.overallRating,
+            "Feedback Date": new Date(item.submittedAt).toLocaleDateString()
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Feedback_Report");
+
+        XLSX.writeFile(workbook, `Feedback_Report_${new Date().getTime()}.xlsx`);
+    };
 
     return (
         <div className="fade-in">
@@ -212,10 +261,10 @@ const Reports = () => {
                             <div className="d-flex justify-content-between align-items-center mb-3">
                                 <h5 className="fw-bold mb-0 text-dark">Report Preview</h5>
                                 <div className="d-flex gap-2">
-                                    <Button variant="outline-danger" size="sm" className="d-flex align-items-center">
+                                    <Button onClick={handleExportPDF} variant="outline-danger" size="sm" className="d-flex align-items-center">
                                         <FileText size={16} className="me-1" /> PDF
                                     </Button>
-                                    <Button variant="outline-success" size="sm" className="d-flex align-items-center">
+                                    <Button onClick={handleExportExcel} variant="outline-success" size="sm" className="d-flex align-items-center">
                                         <FileDown size={16} className="me-1" /> Excel
                                     </Button>
                                     <Button variant="outline-dark" size="sm" className="d-flex align-items-center" onClick={() => window.print()}>
