@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
     return (
         <div className="admin-layout" style={{ minHeight: '100vh', backgroundColor: 'var(--bg-light)' }}>
             <AdminNavbar />
-            <Container fluid className="px-4 pb-5">
+            <Container fluid className="px-2 px-md-4 pb-5">
                 {children}
             </Container>
         </div>

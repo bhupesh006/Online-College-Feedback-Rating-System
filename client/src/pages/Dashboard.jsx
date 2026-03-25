@@ -84,7 +84,7 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="fade-in px-4 py-4" style={{ backgroundColor: '#FAF9F6', minHeight: '100vh' }}>
+        <div className="fade-in py-2" style={{ backgroundColor: 'transparent', minHeight: '100vh' }}>
             <div className="mb-5">
                 <h1 className="display-6 fw-bold mb-1" style={{ color: '#111F35' }}>Welcome, {user?.name}</h1>
                 <p className="text-muted mb-0">Select a category to share your valuable feedback</p>
@@ -129,8 +129,8 @@ const Dashboard = () => {
                 </Row>
             )}
 
-            <h5 className="fw-bold mb-4 text-dark px-2">Browse Categories</h5>
-            <Row className="g-4 mb-4 px-2">
+            <h5 className="fw-bold mb-4 text-dark">Browse Categories</h5>
+            <Row className="g-4 mb-4">
                 {categoryGroups.map((group, idx) => (
                     <Col lg={4} key={idx}>
                         <div className="bg-white rounded-4 shadow-sm border-0 h-100 overflow-hidden card-custom">

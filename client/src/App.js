@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
   return (
     <>
       <Navbar />
-      <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="container-lg px-2 px-md-4 py-3" style={{ maxWidth: '1200px' }}>
         {children}
       </div>
     </>

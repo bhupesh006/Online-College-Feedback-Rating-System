@@ -68,7 +68,7 @@ const Login = () => {
                                     <Form.Label className="fw-semibold small text-uppercase text-muted">Password</Form.Label>
                                     <Form.Control
                                         type="password"
-                                        placeholder="••••••••"
+                                        placeholder="Password"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}

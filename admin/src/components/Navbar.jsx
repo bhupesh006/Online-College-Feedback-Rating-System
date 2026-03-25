@@ -9,7 +9,7 @@ const AdminNavbar = () => {
 
     return (
         <Navbar expand="lg" className="bg-dark-custom mb-4 shadow-sm py-3" variant="dark">
-            <Container fluid className="px-4">
+            <Container fluid className="px-2 px-md-4">
                 <Navbar.Brand className="fw-bold d-flex align-items-center text-white">
                     <div className="bg-white rounded-circle d-flex align-items-center justify-content-center me-2" style={{ width: '32px', height: '32px' }}>
                         <span className="text-primary-custom fw-bold">A</span>

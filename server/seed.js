@@ -29,8 +29,8 @@ const seedUsers = async () => {
 
         // Student User 1
         const student1 = new User({
-            name: 'Abishek',
-            email: 'abishek@college.edu',
+            name: 'Generic Student',
+            email: 'student@college.edu',
             password: 'student123',
             role: 'student',
             department: 'Computer Science',

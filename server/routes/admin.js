@@ -3,6 +3,7 @@ const router = express.Router();
 const Feedback = require('../models/Feedback');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { checkCache, invalidateCache } = require('../middleware/cache');
 
 // Middleware to check if user is admin
 const adminAuth = async (req, res, next) => {
@@ -18,7 +19,7 @@ const adminAuth = async (req, res, next) => {
 };
 
 // GET Dashboard Stats
-router.get('/stats', auth, adminAuth, async (req, res) => {
+router.get('/stats', auth, adminAuth, checkCache('admin:stats'), async (req, res) => {
     try {
         const totalFeedback = await Feedback.countDocuments();
 
@@ -62,7 +63,7 @@ router.get('/stats', auth, adminAuth, async (req, res) => {
 });
 
 // GET All Feedback (For Reports)
-router.get('/all-feedback', auth, adminAuth, async (req, res) => {
+router.get('/all-feedback', auth, adminAuth, checkCache('admin:all'), async (req, res) => {
     try {
         const feedback = await Feedback.find().sort({ submittedAt: -1 });
         res.json(feedback);
@@ -72,7 +73,7 @@ router.get('/all-feedback', auth, adminAuth, async (req, res) => {
 });
 
 // GET Analytics Data
-router.get('/analytics', auth, adminAuth, async (req, res) => {
+router.get('/analytics', auth, adminAuth, checkCache('admin:analytics'), async (req, res) => {
     try {
         const sixMonthsAgo = new Date();
         sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
@@ -147,6 +148,11 @@ router.put('/feedback/:id/status', auth, adminAuth, async (req, res) => {
             { new: true }
         );
         if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
+        
+        // Invalidate admin caches and user feedback caches
+        await invalidateCache('admin*');
+        await invalidateCache('feedback*');
+        
         res.json(feedback);
     } catch (err) {
         res.status(500).json({ message: 'Server Error' });

@@ -421,9 +421,9 @@ const FeedbackForm = () => {
     };
 
     return (
-        <Container className="py-4" style={{ maxWidth: '800px' }}>
+        <Container className="py-4 px-2 px-md-4" style={{ maxWidth: '800px' }}>
             <Card className="shadow-sm border-0">
-                <Card.Body className="p-4">
+                <Card.Body className="p-3 p-md-4">
                     <div className="text-center mb-4">
                         <h2 className="mb-2" style={{ color: '#111F35' }}>{isEdit ? 'Edit' : ''} {category} Feedback</h2>
                         <p className="text-muted">{isEdit ? 'Update your feedback' : 'Give your valuable feedback to help us improve.'}</p>
@@ -453,7 +453,7 @@ const FeedbackForm = () => {
                                 <div className="mb-4">
                                     <h5 className="mb-3 border-bottom pb-2" style={{ color: '#8A244B' }}>Rate the following aspects</h5>
                                     {currentSubCatData.ratings.map(aspect => (
-                                        <div key={aspect} className="d-flex justify-content-between align-items-center mb-3 bg-light p-3 rounded">
+                                        <div key={aspect} className="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 bg-light p-3 rounded gap-2">
                                             <span className="fw-medium">{aspect}</span>
                                             <StarRating
                                                 rating={ratings[aspect] || 0}

@@ -1,10 +1,22 @@
 const express = require('express');
 const router = express.Router();
+const Joi = require('joi');
 const Feedback = require('../models/Feedback');
 const auth = require('../middleware/auth'); // We need to create this middleware
+const { checkCache, invalidateCache } = require('../middleware/cache');
+const { feedbackSubmissionLimiter } = require('../middleware/rateLimiter');
+
+// Validation Schema
+const feedbackSchema = Joi.object({
+    category: Joi.string().required(),
+    subCategory: Joi.string().required(),
+    ratings: Joi.object().pattern(Joi.string(), Joi.number().min(1).max(5)).required(),
+    questions: Joi.object().pattern(Joi.string(), Joi.string().allow('')).optional(),
+    overallRating: Joi.number().min(1).max(5).required()
+});
 
 // GET User's Feedback
-router.get('/my-feedback', auth, async (req, res) => {
+router.get('/my-feedback', auth, checkCache('feedback:my'), async (req, res) => {
     try {
         const feedback = await Feedback.find({ studentEmail: req.user.email }).sort({ submittedAt: -1 }); // Assuming we store email or ID
         // Or better, find by userId if we store it
@@ -15,9 +27,13 @@ router.get('/my-feedback', auth, async (req, res) => {
 });
 
 // POST New Feedback
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, feedbackSubmissionLimiter, async (req, res) => {
     try {
-        const { category, subCategory, ratings, questions, overallRating } = req.body;
+        // Strip unknown fields or allow them so old frontend requests don't fail
+        const { error, value } = feedbackSchema.validate(req.body, { allowUnknown: true, stripUnknown: true });
+        if (error) return res.status(400).json({ message: error.details[0].message });
+
+        const { category, subCategory, ratings, questions, overallRating } = value;
 
         const User = require('../models/User');
         const user = await User.findById(req.user.id);
@@ -37,7 +53,11 @@ router.post('/', auth, async (req, res) => {
         });
 
         const savedFeedback = await newFeedback.save();
-        res.json(savedFeedback);
+        
+        // Invalidate caches
+        await invalidateCache('feedback*');
+        
+        res.status(201).json(savedFeedback);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -97,6 +117,10 @@ router.delete('/:id', auth, async (req, res) => {
         }
 
         await Feedback.findByIdAndDelete(req.params.id);
+        
+        // Invalidate caches
+        await invalidateCache('feedback*');
+        
         res.json({ message: 'Feedback deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -104,7 +128,7 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // GET Feedback by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', auth, checkCache('feedback:item'), async (req, res) => {
     try {
         const feedback = await Feedback.findById(req.params.id);
         if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
@@ -131,6 +155,10 @@ router.put('/:id', auth, async (req, res) => {
         }
 
         feedback = await Feedback.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        
+        // Invalidate caches
+        await invalidateCache('feedback*');
+        
         res.json(feedback);
     } catch (err) {
         res.status(400).json({ message: err.message });

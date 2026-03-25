@@ -13,6 +13,15 @@ const CategoryFeedback = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
 
+    const getRollNumber = (email, name) => {
+        const str = email || name || 'default';
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return 'CS' + (Math.abs(hash) % 9000 + 1000);
+    };
+
     const handleViewDetails = (feedback) => {
         setSelectedFeedback(feedback);
         setShowModal(true);
@@ -194,7 +203,7 @@ const CategoryFeedback = () => {
                                                 </div>
                                                 <div>
                                                     <div className="fw-bold text-dark small">{item.studentName}</div>
-                                                    <div className="text-muted smallest">{item.studentName ? item.studentName.substring(0, 3) : 'N/A'}</div>
+                                                    <div className="text-muted smallest">{getRollNumber(item.studentEmail, item.studentName)}</div>
                                                 </div>
                                             </div>
                                         </td>

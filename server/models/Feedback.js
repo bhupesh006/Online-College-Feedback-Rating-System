@@ -22,4 +22,10 @@ const FeedbackSchema = new mongoose.Schema({
     submittedAt: { type: Date, default: Date.now }
 });
 
+// Indexes for faster querying
+FeedbackSchema.index({ studentEmail: 1 });
+FeedbackSchema.index({ status: 1 });
+FeedbackSchema.index({ category: 1 });
+FeedbackSchema.index({ submittedAt: -1 });
+
 module.exports = mongoose.model('Feedback', FeedbackSchema);

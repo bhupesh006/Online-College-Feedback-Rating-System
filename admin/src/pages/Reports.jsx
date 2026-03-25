@@ -4,6 +4,15 @@ import { Row, Col, Card, Form, Button, Table, Badge, ProgressBar } from 'react-b
 import { FileDown, Printer, FileText, CheckCircle, Filter, Download } from 'lucide-react';
 
 const Reports = () => {
+    const getRollNumber = (email, name) => {
+        const str = email || name || 'default';
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return 'CS' + (Math.abs(hash) % 9000 + 1000);
+    };
+
     const [generating, setGenerating] = useState(false);
     const [reportReady, setReportReady] = useState(false);
     const [feedbacks, setFeedbacks] = useState([]);
@@ -294,8 +303,7 @@ const Reports = () => {
                                             <tbody>
                                                 {reportData.detailedFeedback.map((item) => (
                                                     <tr key={item._id}>
-                                                        <td className="ps-4 fw-bold text-muted small">{item.studentName ? item.studentName.substring(0, 3) + '...' : 'N/A'}</td>
-                                                        {/* Using studentName substring as ID proxy or just 'N/A' as we didn't store ID explicitly in accessible way easily unless we populate */}
+                                                        <td className="ps-4 fw-bold text-muted small">{getRollNumber(item.studentEmail, item.studentName)}</td>
                                                         <td className="fw-semibold text-dark">{item.studentName}</td>
                                                         <td className="text-secondary small">{item.subCategory}</td>
                                                         <td className="text-center">
