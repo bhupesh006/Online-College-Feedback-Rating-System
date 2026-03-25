@@ -4,14 +4,6 @@ import { Row, Col, Card, Form, Button, Table, Badge, ProgressBar } from 'react-b
 import { FileDown, Printer, FileText, CheckCircle, Filter, Download } from 'lucide-react';
 
 const Reports = () => {
-    const getRollNumber = (email, name) => {
-        const str = email || name || 'default';
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return 'CS' + (Math.abs(hash) % 9000 + 1000);
-    };
 
     const [generating, setGenerating] = useState(false);
     const [reportReady, setReportReady] = useState(false);
@@ -293,8 +285,7 @@ const Reports = () => {
                                         <Table hover className="mb-0 align-middle">
                                             <thead className="bg-light text-muted small">
                                                 <tr>
-                                                    <th className="ps-4 border-0">Student ID</th>
-                                                    <th className="border-0">Name</th>
+                                                    <th className="ps-4 border-0">Name</th>
                                                     <th className="border-0" style={{ width: '40%' }}>Feedback Content</th>
                                                     <th className="border-0 text-center">Rating</th>
                                                     <th className="border-0 text-end pe-4">Date</th>
@@ -303,8 +294,7 @@ const Reports = () => {
                                             <tbody>
                                                 {reportData.detailedFeedback.map((item) => (
                                                     <tr key={item._id}>
-                                                        <td className="ps-4 fw-bold text-muted small">{getRollNumber(item.studentEmail, item.studentName)}</td>
-                                                        <td className="fw-semibold text-dark">{item.studentName}</td>
+                                                        <td className="ps-4 fw-semibold text-dark">{item.studentName}</td>
                                                         <td className="text-secondary small">{item.subCategory}</td>
                                                         <td className="text-center">
                                                             <Badge bg={item.overallRating >= 4 ? 'success' : item.overallRating === 3 ? 'warning' : 'danger'} pill>

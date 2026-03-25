@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { Container, Card, Form, Button, Alert } from 'react-bootstrap';
-import { FaGoogle } from 'react-icons/fa';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -31,6 +31,30 @@ const Login = () => {
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            setLoading(true);
+            const response = await api.post('/auth/google', { 
+                credential: credentialResponse.credential,
+                role: 'student' 
+            });
+            
+            if (response.data.token) {
+                if (response.data.user.role !== 'student') {
+                    setError('Access Denied: Only students can access this portal.');
+                    return;
+                }
+                login(response.data);
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || 'Google Login failed.');
         } finally {
             setLoading(false);
         }
@@ -80,9 +104,16 @@ const Login = () => {
                             <hr className="flex-grow-1" />
                         </div>
 
-                        <Button variant="outline-dark" className="w-100 d-flex align-items-center justify-content-center gap-2" onClick={() => alert('Google Sign-In is currently a placeholder. Please use the demo credentials provided.')}>
-                            <FaGoogle /> Sign in with Google
-                        </Button>
+                        <div className="d-flex justify-content-center w-100">
+                            <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={() => {
+                                    setError('Google Sign-In was unsuccessful. Try again.');
+                                }}
+                                width="350px"
+                                useOneTap
+                            />
+                        </div>
                     </Form>
                 </Card.Body>
             </Card>

@@ -7,6 +7,7 @@ import FeedbackForm from './pages/FeedbackForm';
 import MyFeedback from './pages/MyFeedback';
 import Navbar from './components/Navbar'; // We will create this
 import { AuthProvider, useAuth } from './context/AuthContext'; // We will create this
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -26,46 +27,48 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/feedback/:category/:subCategory"
-            element={
-              <ProtectedRoute>
-                <FeedbackForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/feedback/edit/:id"
-            element={
-              <ProtectedRoute>
-                <FeedbackForm />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/my-feedback"
-            element={
-              <ProtectedRoute>
-                <MyFeedback />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || 'placeholder-client-id'}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback/:category/:subCategory"
+              element={
+                <ProtectedRoute>
+                  <FeedbackForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <FeedbackForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-feedback"
+              element={
+                <ProtectedRoute>
+                  <MyFeedback />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 
