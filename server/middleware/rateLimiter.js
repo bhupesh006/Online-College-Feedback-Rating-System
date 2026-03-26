@@ -2,8 +2,14 @@ const rateLimit = require('express-rate-limit');
 const RedisStore = require('rate-limit-redis').default || require('rate-limit-redis');
 const redisClient = require('../config/redis');
 
-// If Redis is not ready, we will not use the store option when running rateLimit.
-// Actually, it's safer to just provide new instances inline.
+// Fallback to MemoryStore if Redis is not configured
+const useRedis = !!process.env.REDIS_URL;
+
+const storeConfig = useRedis ? {
+    store: new RedisStore({
+        sendCommand: (...args) => redisClient.sendCommand(args),
+    })
+} : {};
 
 // Rate Limiter for general API endpoints
 const apiLimiter = rateLimit({
@@ -11,9 +17,7 @@ const apiLimiter = rateLimit({
     max: 100, 
     standardHeaders: true, 
     legacyHeaders: false, 
-    store: new RedisStore({
-        sendCommand: (...args) => redisClient.sendCommand(args),
-    })
+    ...storeConfig
 });
 
 // Stricter Rate Limiter for feedback submissions
@@ -23,27 +27,10 @@ const feedbackSubmissionLimiter = rateLimit({
     message: 'Too many feedback submissions from this IP, please try again after 3 minutes',
     standardHeaders: true,
     legacyHeaders: false,
-    store: new RedisStore({
-        sendCommand: (...args) => redisClient.sendCommand(args),
-    })
+    ...storeConfig
 });
 
-// Wrapper middlewares to bypass if Redis is not connected
-const apiLimiterMiddleware = (req, res, next) => {
-    if (!redisClient.isReady) {
-        return next();
-    }
-    return apiLimiter(req, res, next);
-};
-
-const feedbackSubmissionLimiterMiddleware = (req, res, next) => {
-    if (!redisClient.isReady) {
-        return next();
-    }
-    return feedbackSubmissionLimiter(req, res, next);
-};
-
 module.exports = {
-    apiLimiter: apiLimiterMiddleware,
-    feedbackSubmissionLimiter: feedbackSubmissionLimiterMiddleware
+    apiLimiter,
+    feedbackSubmissionLimiter
 };
