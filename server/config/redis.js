@@ -1,20 +1,37 @@
 const { createClient } = require('redis');
 
 // Initialize Redis Client
-const redisClient = createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379'
-});
+const REDIS_URL = process.env.REDIS_URL || (process.env.NODE_ENV === 'production' ? null : 'redis://127.0.0.1:6379');
 
-redisClient.on('error', (err) => console.error('Redis Client Error', err));
-redisClient.on('connect', () => console.log('Redis Client Connected'));
+let redisClient = {
+    isReady: false,
+    on: () => {},
+    connect: async () => {},
+    get: async () => null,
+    setEx: async () => {},
+    keys: async () => [],
+    del: async () => {},
+    sendCommand: () => {}
+};
 
-// Connect to Redis (Self-executing so we don't have to await it explicitly everywhere in serverless, but best practice is to connect)
-(async () => {
-    try {
-        await redisClient.connect();
-    } catch (err) {
-        console.error('Failed to connect to Redis', err);
-    }
-})();
+if (REDIS_URL) {
+    redisClient = createClient({
+        url: REDIS_URL
+    });
+
+    redisClient.on('error', (err) => console.error('Redis Client Error', err));
+    redisClient.on('connect', () => console.log('Redis Client Connected'));
+
+    // Connect to Redis
+    (async () => {
+        try {
+            await redisClient.connect();
+        } catch (err) {
+            console.error('Failed to connect to Redis', err);
+        }
+    })();
+} else {
+    console.log('Redis URL not provided, running without Redis cache.');
+}
 
 module.exports = redisClient;
