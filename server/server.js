@@ -44,7 +44,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/admin', adminRoutes);
 
-if (process.env.NODE_ENV !== 'production') {
+// Start the server if not deployed as a serverless function (e.g. Vercel)
+if (process.env.NODE_ENV !== 'production' || process.env.RENDER) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
