@@ -18,5 +18,19 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+ 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error('API Error:', {
+            url: error.config?.url,
+            method: error.config?.method,
+            status: error.response?.status,
+            message: error.message,
+            data: error.response?.data
+        });
+        return Promise.reject(error);
+    }
+);
 
 export default api;

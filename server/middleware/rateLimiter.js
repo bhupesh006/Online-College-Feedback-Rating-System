@@ -7,7 +7,16 @@ const useRedis = !!process.env.REDIS_URL;
 
 const storeConfig = useRedis ? {
     store: new RedisStore({
-        sendCommand: (...args) => redisClient.sendCommand(args),
+    sendCommand: async (...args) => {
+        try {
+            return await redisClient.sendCommand(args);
+        } catch (err) {
+            console.error('Redis Rate Limiter Error:', err);
+            // Returning undefined or throwing here allows rate-limiter to potentially fallback or fail-open depending on config
+            // But with express-rate-limit, if the store fails, it often hangs unless handled.
+            return null; 
+        }
+    },
     })
 } : {};
 
