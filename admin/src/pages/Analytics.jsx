@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { Row, Col, Card, ProgressBar, Badge } from 'react-bootstrap';
 import { Line, Bar } from 'react-chartjs-2';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import {
     Chart as ChartJS,
     CategoryScale,

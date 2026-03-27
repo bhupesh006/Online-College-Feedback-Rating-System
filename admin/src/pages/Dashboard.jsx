@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Row, Col, Card, ProgressBar, Badge } from 'react-bootstrap';
+import { Row, Col, Card, Badge } from 'react-bootstrap';
 import {
-    MessageSquare, Eye, TrendingUp, TrendingDown,
+    MessageSquare, TrendingUp, TrendingDown,
     BookOpen, Beaker, Library, Briefcase,
     Home, Coffee, Bus, Building,
     Zap, Music, Users, Trash2, Smile

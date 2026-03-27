@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { Row, Col, Card, Table, Badge, Button, Tab, Nav, ProgressBar, Modal, Form } from 'react-bootstrap';
-import { ArrowLeft, User, Calendar, Star, Filter } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Star } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const CategoryFeedback = () => {
@@ -9,7 +9,7 @@ const CategoryFeedback = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('all');
     const [feedbacks, setFeedbacks] = useState([]);
-    const [loading, setLoading] = useState(true);
+
     const [showModal, setShowModal] = useState(false);
     const [selectedFeedback, setSelectedFeedback] = useState(null);
 
@@ -59,13 +59,10 @@ const CategoryFeedback = () => {
                 // Fetching all for now and filtering client side. 
                 // Creating a specific endpoint /admin/feedback?category=... would be better for scale.
                 const response = await api.get('/admin/all-feedback');
-                const all = response.data;
                 const filtered = all.filter(f => f.category === dbCategoryName);
                 setFeedbacks(filtered);
             } catch (err) {
                 console.error(err);
-            } finally {
-                setLoading(false);
             }
         };
         fetchFeedbacks();

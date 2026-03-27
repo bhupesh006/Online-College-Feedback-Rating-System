@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
-import Card from '../components/Card';
-import { Container, Row, Col } from 'react-bootstrap';
+
+import { Row, Col } from 'react-bootstrap';
 import { 
-    LayoutDashboard, BookOpen, Beaker, Library, Briefcase, 
+    BookOpen, Beaker, Library, Briefcase, 
     Home, Coffee, Bus, Building, Zap, Music, Users, 
     Trash2, Smile, CheckCircle, TrendingUp, Star,
     ChevronRight, GraduationCap

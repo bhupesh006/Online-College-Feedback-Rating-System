@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Container, Nav, Dropdown } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, MessageSquare, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AppNavbar = () => {
