@@ -59,6 +59,7 @@ const CategoryFeedback = () => {
                 // Fetching all for now and filtering client side. 
                 // Creating a specific endpoint /admin/feedback?category=... would be better for scale.
                 const response = await api.get('/admin/all-feedback');
+                const all = response.data;
                 const filtered = all.filter(f => f.category === dbCategoryName);
                 setFeedbacks(filtered);
             } catch (err) {
